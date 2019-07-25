@@ -27,7 +27,7 @@ class WtrTransactionState {
         }
         console.log("Sending it to validator...");
 
-        return this.context.setState(enries, this.timeout);
+        return this.context.setState(entries, this.timeout);
     }
 
     pay () {

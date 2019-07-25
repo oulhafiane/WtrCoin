@@ -3,7 +3,7 @@ const { MINTER_PUB_KEY } = require('../config');
 const { _hash, NAMESPACE } = require('./Helper');
 
 class WtrCoin {
-    constructor (context, signer, user) {
+    constructor (context, user, signer = null) {
         this.context = context;
         this.timeout = 500;
         this.signer = signer;
@@ -32,7 +32,7 @@ class WtrCoin {
             throw new InvalidTransaction("You are not the minter.");
         return this.getBalance().then((coins) => {
             let newCoins = parseInt(coinsToDeposit) + parseInt(coins);
-            let data = _serialize(newCoins.toString());
+            let data = _serializeCoins(newCoins.toString());
             let entries = {
                 [this.address]: data
             }
@@ -42,7 +42,7 @@ class WtrCoin {
     }
 }
 
-const _serialize = (coins) => {
+const _serializeCoins = (coins) => {
     let data = [];
     data.push([coins].join(''));
 
@@ -52,5 +52,6 @@ const _serialize = (coins) => {
 const _makeWtrCoinAddress = (x) => NAMESPACE + _hash(x);
 
 module.exports = {
-    WtrCoin
+    WtrCoin,
+    _serializeCoins
 }

@@ -1,6 +1,7 @@
 const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
 const { SERVER_PUB_KEY } = require('../config');
 const { _hash, NAMESPACE } = require('./Helper');
+const { WtrCoin, _serializeCoins } = require('./WtrCoin');
 
 class WtrTransactionState {
     constructor (context, seller, buyer, signer, addresss = null) {
@@ -10,6 +11,19 @@ class WtrTransactionState {
         this.buyer = buyer;
         this.signer = signer;
         this.addresss = addresss;
+    }
+
+    getTransaction() {
+        return this.context.getState([this.addresss], this.timeout)
+            .then ((valuesAddresses) => {
+                let value = valuesAddresses[this.addresss];
+                if (!Object.keys(value).length)
+                    throw new InvalidTransaction("Can't get data of this transaction.");
+                return value;
+            })
+            .catch ((error) => {
+                throw new InvalidTransaction(error);
+            });
     }
 
     createNewTransaction (total, nonce) {
@@ -30,7 +44,37 @@ class WtrTransactionState {
     }
 
     pay () {
+        console.log("Paying a transaction...");
+        this.getTransaction().then ((transaction) => {
+            let data = transaction.split(',');
+            if (data.length < 3)
+                throw new InvalidTransaction("This transaction is invalid.");
+            let buyer = data[1];
+            let total = parseInt(data[2]);
+            if (this.signer !== buyer)
+                throw new InvalidTransaction("You are not the buyer.");
+            let buyerCoin = new WtrCoin(this.context, this.buyer);
 
+
+            return buyerCoin.getBalance().then ((coins) => {
+                if (coins < parseInt(total))
+                    throw new InvalidTransaction("You don't have enough coins.");
+                let newCoins = coins - total;
+                let data = _serializeCoins(newCoins.toString());
+                let entries = {
+                    [buyerCoin.address]: data
+                } 
+
+                return this.context.setState(entries, this.timeout).then (() => {
+                    data = _serialize(this.seller, this.buyer, total, 'paid');
+                    entries = {
+                        [this.addresss]: data
+                    }
+
+                    return this.context.setState(entries, this.timeout);
+                });
+            });
+        })
     }
 
     requestKey () {
@@ -45,9 +89,9 @@ class WtrTransactionState {
     }
 }
 
-const _serialize = (seller, buyer, total) => {
+const _serialize = (seller, buyer, total, status = null, padlock = null) => {
     let data = [];
-    data.push([seller, buyer, total].join(','));
+    data.push([seller, buyer, total, status, padlock].join(','));
 
     return Buffer.from(data.join(''));
 }

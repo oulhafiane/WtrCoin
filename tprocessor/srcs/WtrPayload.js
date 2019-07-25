@@ -21,7 +21,7 @@ class WtrPayload {
                 if (null === payload.buyer || null === payload.seller
                     || null === payload.total || null === payload.nonce)
                     throw new InvalidTransaction('Payload incorrect.');
-                return new WtrTransactionPayload(
+                return new WtrPayload(
                     payload.action,
                     null,
                     payload.buyer,
@@ -34,7 +34,7 @@ class WtrPayload {
             case 'terminate':
                 if (null === payload.address)
                     throw new InvalidTransaction('Address not found.');
-                return new WtrTransactionPayload(
+                return new WtrPayload(
                     payload.action,
                     payload.address
                 )

@@ -46,14 +46,15 @@ class WtrTransactionState {
     pay () {
         console.log("Paying a transaction...");
         this.getTransaction().then ((transaction) => {
-            let data = transaction.split(',');
+            let data = transaction.toString().split(',');
             if (data.length < 3)
                 throw new InvalidTransaction("This transaction is invalid.");
+            let seller = data[0];
             let buyer = data[1];
             let total = parseInt(data[2]);
             if (this.signer !== buyer)
                 throw new InvalidTransaction("You are not the buyer.");
-            let buyerCoin = new WtrCoin(this.context, this.buyer);
+            let buyerCoin = new WtrCoin(this.context, buyer);
 
 
             return buyerCoin.getBalance().then ((coins) => {
@@ -66,7 +67,7 @@ class WtrTransactionState {
                 } 
 
                 return this.context.setState(entries, this.timeout).then (() => {
-                    data = _serialize(this.seller, this.buyer, total, 'paid');
+                    data = _serialize(seller, buyer, total, 'paid');
                     entries = {
                         [this.addresss]: data
                     }

@@ -29,7 +29,7 @@ class WtrCoin {
 
     mintWtrCoin(coinsToDeposit) {
         if (MINTER_PUB_KEY !== this.signer)
-            throw new InvalidTransaction("You are not the minter.");
+            throw new InvalidTransaction("You are not the minter, you are " + this.signer);
         return this.getBalance().then((coins) => {
             let newCoins = parseInt(coinsToDeposit) + parseInt(coins);
             let data = _serializeCoins(newCoins.toString());

@@ -1,7 +1,8 @@
 const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
+const { WtrCoinPayload } = require('./WtrCoinPayload');
 const cbor = require('cbor');
 
-class WtrTransactionPayload {
+class WtrPayload {
     constructor (action, address, buyer = null, seller = null, total = null, nonce = null) {
         this.action = action;
         this.address = address;
@@ -14,6 +15,8 @@ class WtrTransactionPayload {
     static fromBytes (payload) {
         payload = cbor.decodeFirstSync(payload);
         switch (payload.action) {
+            case 'mint':
+                return WtrCoinPayload.fromBytes(transactionRequest.payload);
             case 'newTransaction':
                 if (null === payload.buyer || null === payload.seller
                     || null === payload.total || null === payload.nonce)
@@ -42,5 +45,5 @@ class WtrTransactionPayload {
 }
 
 module.exports = {
-    WtrTransactionPayload
+    WtrPayload
 }

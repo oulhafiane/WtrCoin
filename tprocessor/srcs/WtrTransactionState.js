@@ -13,16 +13,19 @@ class WtrTransactionState {
     }
 
     createNewTransaction (total) {
+        console.log("Creating new transaction...");
         if (null !== this.addresss)
             throw new InvalidTransaction("This transaction already created.");
         if (SERVER_PUB_KEY !== this.signer)
             throw new InvalidTransaction("You are not authorized.");
+        console.log("All tests passed : OK.");
         let date = "" + new Date();
         this.addresss = _newWtrTransactionAddress(this.seller, this.buyer, date);
         let data = _serialize(this.seller, this.buyer, total);
         let entries = {
             [this.addresss]: data
         }
+        console.log("Sending it to validator...");
 
         return this.context.setState(enries, this.timeout);
     }

@@ -14,6 +14,8 @@ class WtrTransactionHandler extends TransactionHandler {
         let payload = WtrTransactionPayload.fromBytes(transactionRequest.payload);
         let state = new WtrTransactionState(context, payload.seller, payload.buyer, signer, payload.address);
 
+        console.log("Action : " + payload.action);
+
         switch (payload.action) {
             case 'newTransaction':
                 return state.createNewTransaction(payload.total);

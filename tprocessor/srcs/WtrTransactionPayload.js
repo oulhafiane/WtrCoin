@@ -12,29 +12,26 @@ class WtrTransactionPayload {
 
     static fromBytes (payload) {
         payload = cbor.decodeFirstSync(payload);
-        let wtrTransactionPayload;
         switch (payload.action) {
             case 'newTransaction':
                 if (null === payload.buyer || null === payload.seller || null === payload.total)
                     throw new InvalidTransaction('Payload incorrect.');
-                wtrTransactionPayload = new WtrTransactionPayload(
+                return new WtrTransactionPayload(
                     payload.action,
                     null,
                     payload.buyer,
                     payload.seller,
                     payload.total
                 )
-                return wtrTransactionPayload;
             case 'pay':
             case 'requestKey':
             case 'terminate':
                 if (null === payload.address)
                     throw new InvalidTransaction('Address not found.');
-                wtrTransactionPayload = new WtrTransactionPayload(
+                return new WtrTransactionPayload(
                     payload.action,
                     payload.address
                 )
-                return wtrTransactionPayload();
             default:
                 throw new InvalidTransaction("Action not recognized.");
         }

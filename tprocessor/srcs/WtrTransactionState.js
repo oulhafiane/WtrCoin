@@ -1,6 +1,6 @@
 const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
-const crypto = require('crypto');
-const { SERVER_PUB_KEY } = require('../config');
+const { SERVER_PUB_KEY, FAMILY_NAME } = require('../config');
+const { _hash, NAMESPACE } = require('./Helper');
 
 class WtrTransactionState {
     constructor (context, seller, buyer, signer, addresss = null) {
@@ -47,14 +47,11 @@ class WtrTransactionState {
 
 const _serialize = (seller, buyer, total) => {
     let data = [];
-    data.push([seller, buyer, total].join(''));
+    data.push([seller, buyer, total].join(','));
 
     return Buffer.from(data.join(''));
 }
 
-const _hash = (x) => crypto.createHash('sha512').update(x).digest('hex').toLowerCase().substring(0, 64);
-const FAMILY_NAME = 'wtr-transaction-family';
-const NAMESPACE = _hash(FAMILY_NAME).substring(0, 6);
 const _newWtrTransactionAddress = (x, y, nonce) => 
     NAMESPACE + _hash(x).substring(0, 28) + _hash(y).substring(0, 28) + _hash(nonce).substring(0, 8);
 

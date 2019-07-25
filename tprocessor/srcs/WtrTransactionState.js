@@ -12,15 +12,14 @@ class WtrTransactionState {
         this.addresss = addresss;
     }
 
-    createNewTransaction (total) {
+    createNewTransaction (total, nonce) {
         console.log("Creating new transaction...");
         if (null !== this.addresss)
             throw new InvalidTransaction("This transaction already created.");
         if (SERVER_PUB_KEY !== this.signer)
             throw new InvalidTransaction("You are not authorized.");
         console.log("All tests passed : OK.");
-        let date = "" + new Date();
-        this.addresss = _newWtrTransactionAddress(this.seller, this.buyer, date);
+        this.addresss = _newWtrTransactionAddress(this.seller, this.buyer, nonce);
         let data = _serialize(this.seller, this.buyer, total);
         let entries = {
             [this.addresss]: data
@@ -56,10 +55,8 @@ const _serialize = (seller, buyer, total) => {
 const _hash = (x) => crypto.createHash('sha512').update(x).digest('hex').toLowerCase().substring(0, 64);
 const FAMILY_NAME = 'wtr-transaction-family';
 const NAMESPACE = _hash(FAMILY_NAME).substring(0, 6);
-const _newWtrTransactionAddress = (x, y, date) => {
-    let random = "" + Math.random();
-    return NAMESPACE + _hash(x).substring(0, 6) + _hash(y).substring(0, 6) + _hash(date + random).substring(52);
-}
+const _newWtrTransactionAddress = (x, y, nonce) => 
+    NAMESPACE + _hash(x).substring(0, 28) + _hash(y).substring(0, 28) + _hash(nonce).substring(8);
 
 module.exports = {
     NAMESPACE,

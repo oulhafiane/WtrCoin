@@ -18,7 +18,7 @@ class WtrTransactionHandler extends TransactionHandler {
 
         switch (payload.action) {
             case 'newTransaction':
-                return state.createNewTransaction(payload.total);
+                return state.createNewTransaction(payload.total, payload.nonce);
             case 'pay':
                 return state.pay();
             case 'requestKey':

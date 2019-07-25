@@ -15,12 +15,12 @@ class WtrCoin {
         return this.context.getState([this.address], this.timeout)
             .then ((values) => {
                 let coins = values[this.address];
-                if (coins) {
+                if (!Object.keys(coins).length) {
+                    return 0;
+                } else {
                     console.log("User : " + this.user + " => " + coins);
                     return coins;
                 }
-                else
-                    return 0;
             })
             .catch ((error) => {
                 throw new InvalidTransaction(error);

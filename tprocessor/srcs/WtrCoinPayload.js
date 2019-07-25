@@ -5,7 +5,7 @@ class WtrCoinPayload {
     constructor (action, user, coins) {
         this.action = action;
         this.user = user;
-        this.coins = coints;
+        this.coins = coins;
     }
 
     static fromBytes (payload) {

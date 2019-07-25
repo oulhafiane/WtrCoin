@@ -12,11 +12,11 @@ class WtrPayload {
         this.nonce = nonce;
     }
 
-    static fromBytes (payload) {
-        payload = cbor.decodeFirstSync(payload);
+    static fromBytes (payloadBuf) {
+        let payload = cbor.decodeFirstSync(payloadBuf);
         switch (payload.action) {
             case 'mint':
-                return WtrCoinPayload.fromBytes(transactionRequest.payload);
+                return WtrCoinPayload.fromBytes(payloadBuf);
             case 'newTransaction':
                 if (null === payload.buyer || null === payload.seller
                     || null === payload.total || null === payload.nonce)

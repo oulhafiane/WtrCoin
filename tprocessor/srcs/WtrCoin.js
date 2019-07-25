@@ -4,7 +4,7 @@ const { _hash, NAMESPACE } = require('./Helper');
 
 class WtrCoin {
     constructor (context, signer, user) {
-        this.context;
+        this.context = context;
         this.timeout = 500;
         this.signer = signer;
         this.user = user;
@@ -16,7 +16,7 @@ class WtrCoin {
             .then ((values) => {
                 let coins = values[this.address];
                 if (coins) {
-                    console.log("Address : " + this.address + " => " + coins);
+                    console.log("User : " + this.user + " => " + coins);
                     return coins;
                 }
                 else
@@ -31,13 +31,13 @@ class WtrCoin {
         if (MINTER_PUB_KEY !== this.signer)
             throw new InvalidTransaction("You are not the minter.");
         return this.getBalance().then((coins) => {
-            let newCoins = parseInt(cointsToDeposit) + parseInt(coins);
+            let newCoins = parseInt(coinsToDeposit) + parseInt(coins);
             let data = _serialize(newCoins.toString());
             let entries = {
                 [this.address]: data
             }
 
-            return this.context.setState(enries, this.timeout);
+            return this.context.setState(entries, this.timeout);
         });
     }
 }

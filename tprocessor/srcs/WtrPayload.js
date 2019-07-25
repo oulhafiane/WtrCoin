@@ -36,7 +36,7 @@ class WtrPayload {
                     throw new InvalidTransaction('Address not found.');
                 return new WtrPayload(
                     payload.action,
-                    payload.address
+                    payload.address.toString()
                 )
             default:
                 throw new InvalidTransaction("Action not recognized.");

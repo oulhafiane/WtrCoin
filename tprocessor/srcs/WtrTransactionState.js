@@ -60,13 +60,15 @@ class WtrTransactionState {
             return buyerCoin.getBalance().then ((coins) => {
                 if (coins < parseInt(total))
                     throw new InvalidTransaction("You don't have enough coins.");
-                let newCoins = coins - total;
+                console.log("Buyer address :" + buyerCoin.address);
+                let newCoins = coins - total
                 let data = _serializeCoins(newCoins.toString());
                 let entries = {
                     [buyerCoin.address]: data
                 } 
 
                 return this.context.setState(entries, this.timeout).then (() => {
+                    console.log("the transaction paid.");
                     data = _serialize(seller, buyer, total, 'paid');
                     entries = {
                         [this.addresss]: data

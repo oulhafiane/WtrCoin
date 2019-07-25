@@ -1,0 +1,19 @@
+{
+  "name": "wtr_transaction_processor",
+  "version": "1.0.0",
+  "description": "Waste To Resources Blockchain Hyperledger Sawtooth Transaction Processor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oulhafiane/WtrCoin.git"
+  },
+  "author": "Zakariaa Oulhafiane",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oulhafiane/WtrCoin/issues"
+  },
+  "homepage": "https://github.com/oulhafiane/WtrCoin#readme"
+}

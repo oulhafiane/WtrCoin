@@ -56,7 +56,7 @@ const _hash = (x) => crypto.createHash('sha512').update(x).digest('hex').toLower
 const FAMILY_NAME = 'wtr-transaction-family';
 const NAMESPACE = _hash(FAMILY_NAME).substring(0, 6);
 const _newWtrTransactionAddress = (x, y, nonce) => 
-    NAMESPACE + _hash(x).substring(0, 28) + _hash(y).substring(0, 28) + _hash(nonce).substring(8);
+    NAMESPACE + _hash(x).substring(0, 28) + _hash(y).substring(0, 28) + _hash(nonce).substring(0, 8);
 
 module.exports = {
     NAMESPACE,

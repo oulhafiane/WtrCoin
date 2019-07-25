@@ -1,7 +1,8 @@
 const { TransactionHandler } = require('sawtooth-sdk/processor/handler');
 const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
 const { WtrTransactionPayload } = require('./WtrTransactionPayload');
-const { FAMILY_NAME, NAMESPACE, WtrTransactionState } = require('./WtrTransactionState');
+const { NAMESPACE, WtrTransactionState } = require('./WtrTransactionState');
+const { FAMILY_NAME } = require('../config');
 
 class WtrTransactionHandler extends TransactionHandler {
     constructor () {

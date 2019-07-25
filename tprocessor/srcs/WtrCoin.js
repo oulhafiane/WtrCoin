@@ -1,5 +1,5 @@
 const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
-const { MINTER_PUB_KEY, FAMILY_NAME } = require('../config');
+const { MINTER_PUB_KEY } = require('../config');
 const { _hash, NAMESPACE } = require('./Helper');
 
 class WtrCoin {

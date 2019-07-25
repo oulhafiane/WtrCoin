@@ -1,5 +1,5 @@
 const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
-const { SERVER_PUB_KEY, FAMILY_NAME } = require('../config');
+const { SERVER_PUB_KEY } = require('../config');
 const { _hash, NAMESPACE } = require('./Helper');
 
 class WtrTransactionState {
@@ -57,6 +57,5 @@ const _newWtrTransactionAddress = (x, y, nonce) =>
 
 module.exports = {
     NAMESPACE,
-    FAMILY_NAME,
     WtrTransactionState
 }

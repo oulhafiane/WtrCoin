@@ -21,7 +21,7 @@ class WtrTransactionHandler extends TransactionHandler {
 
         switch (payload.action) {
             case 'mint':
-                state = new WtrCoin(context, signer, payload.user); 
+                state = new WtrCoin(context, payload.user, signer); 
                 return state.mintWtrCoin(payload.coins);
             case 'newTransaction':
                 state = new WtrTransactionState(context, payload.seller, payload.buyer, signer, payload.address);

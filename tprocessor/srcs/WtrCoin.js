@@ -20,7 +20,7 @@ class WtrCoin {
                     return 0;
                 } else {
                     console.log("User : " + this.user + " => " + coins);
-                    return coins;
+                    return parseInt(coins);
                 }
             })
             .catch ((error) => {
@@ -32,7 +32,7 @@ class WtrCoin {
         if (MINTER_PUB_KEY !== this.signer)
             throw new InvalidTransaction("You are not the minter, you are " + this.signer);
         return this.getBalance().then((coins) => {
-            if (isNaN(coins) || coins === null || coins === undefined)
+            if (isNaN(coins))
                 console.log("okk ye");
             else
                 console.log("mint coins : " + coins);

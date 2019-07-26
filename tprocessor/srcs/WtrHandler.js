@@ -17,7 +17,6 @@ class WtrTransactionHandler extends TransactionHandler {
         let state;
 
         payload = WtrPayload.fromBytes(transactionRequest.payload);
-        console.log("Action : " + payload.action);
 
         switch (payload.action) {
             case 'mint':

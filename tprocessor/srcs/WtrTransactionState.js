@@ -18,7 +18,6 @@ class WtrTransactionState {
         return this.context.getState([this.addresss], this.timeout)
             .then ((valuesAddresses) => {
                 let value = valuesAddresses[this.addresss];
-                console.log("transaction : " + this.addresss + " => " + value);
                 if (value === undefined)
                     throw new InvalidTransaction("Can't get data of this transaction.");
                 return value;
@@ -29,24 +28,20 @@ class WtrTransactionState {
     }
 
     createNewTransaction (total, nonce) {
-        console.log("Creating new transaction...");
         if (null !== this.addresss)
             throw new InvalidTransaction("This transaction already created.");
         if (SERVER_PUB_KEY !== this.signer)
             throw new InvalidTransaction("You are not authorized.");
-        console.log("All tests passed : OK.");
         this.addresss = _newWtrTransactionAddress(this.seller, this.buyer, nonce);
         let data = _serialize(this.seller, this.buyer, total);
         let entries = {
             [this.addresss]: data
         }
-        console.log("Sending it to validator...");
 
         return this.context.setState(entries, this.timeout);
     }
 
     pay (key, iv) {
-        console.log("Paying a transaction...");
         return this.getTransaction().then ((transaction) => {
             let data = transaction.toString().split(',');
             if (data.length !== 5)
@@ -64,7 +59,6 @@ class WtrTransactionState {
             return buyerCoin.getBalance().then ((coins) => {
                 if (coins < parseInt(total))
                     throw new InvalidTransaction("You don't have enough coins.");
-                console.log("Buyer address :" + buyerCoin.address);
                 let newCoins = coins - total;
                 let data = _serializeCoins(newCoins.toString());
                 let entries = {
@@ -72,12 +66,10 @@ class WtrTransactionState {
                 } 
 
                 return this.context.setState(entries, this.timeout).then (() => {
-                    console.log("the transaction paid.");
                     let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
                     let padlock = cipher.update('disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels');
                     padlock = Buffer.concat([padlock, cipher.final()]);
                     data = _serialize(seller, buyer, total, 'paid', padlock.toString('hex'));
-                    console.log("Padlock crypted : " + padlock);
                     entries = {
                         [this.addresss]: data
                     }
@@ -89,7 +81,6 @@ class WtrTransactionState {
     }
 
     terminate (key, iv) {
-        console.log("Terminating a transaction...");
         return this.getTransaction().then ((transaction) => {
             let data = transaction.toString().split(',');
             if (data.length !== 5)
@@ -107,7 +98,8 @@ class WtrTransactionState {
             let sellerCoin = new WtrCoin(this.context, seller);
             
             return sellerCoin.getBalance().then ((coins) => {
-                console.log("Seller address :" + sellerCoin.address);
+                if (isNaN(coins))
+                    coins = 0;
                 let newCoins = coins + total;
                 let data = _serializeCoins(newCoins.toString());
                 let entries = {
@@ -115,15 +107,12 @@ class WtrTransactionState {
                 } 
 
                 return this.context.setState(entries, this.timeout).then (() => {
-                    console.log("the seller got paid.");
                     let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
                     let decrypted = decipher.update(Buffer.from(padlock, 'hex'));
                     decrypted = Buffer.concat([decrypted, decipher.final()]);
-                    console.log(decrypted.toString());
                     if (decrypted.toString() !== 'disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels')
                         throw new InvalidTransaction("Invalid key.");
                     data = _serialize(seller, buyer, total, 'terminated', 'terminated');
-                    console.log("Padlock decrypted successfully.");
                     entries = {
                         [this.addresss]: data
                     }

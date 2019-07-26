@@ -15,11 +15,9 @@ class WtrCoin {
         return this.context.getState([this.address], this.timeout)
             .then ((values) => {
                 let coins = values[this.address];
-                console.log("testing coins : " + this.address + " => " + coins);
                 if (coins === undefined) {
                     return 0;
                 } else {
-                    console.log("User : " + this.user + " => " + coins);
                     return parseInt(coins);
                 }
             })
@@ -30,7 +28,7 @@ class WtrCoin {
 
     mintWtrCoin(coinsToDeposit) {
         if (MINTER_PUB_KEY !== this.signer)
-            throw new InvalidTransaction("You are not the minter, you are " + this.signer);
+            throw new InvalidTransaction("You are not the minter.");
         return this.getBalance().then((coins) => {
             if (isNaN(coins))
                 coins = 0;

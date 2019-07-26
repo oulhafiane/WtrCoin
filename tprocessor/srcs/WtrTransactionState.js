@@ -49,14 +49,14 @@ class WtrTransactionState {
         console.log("Paying a transaction...");
         return this.getTransaction().then ((transaction) => {
             let data = transaction.toString().split(',');
-            if (data.length < 3)
+            if (data.length !== 5)
                 throw new InvalidTransaction("This transaction is invalid.");
             let seller = data[0];
             let buyer = data[1];
             let total = parseInt(data[2]);
             if (this.signer !== buyer)
                 throw new InvalidTransaction("You are not the buyer.");
-            if (data.length >= 4 && data[3] === 'paid')
+            if (data[3] === 'paid')
                 throw new InvalidTransaction("This transaction already paid");
             let buyerCoin = new WtrCoin(this.context, buyer);
 
@@ -85,11 +85,53 @@ class WtrTransactionState {
                     return this.context.setState(entries, this.timeout);
                 });
             });
-        })
+        });
     }
 
-    terminate () {
+    terminate (key, iv) {
+        console.log("Terminating a transaction...");
+        return this.getTransaction().then ((transaction) => {
+            let data = transaction.toString().split(',');
+            if (data.length !== 5)
+                throw new InvalidTransaction("This transaction is invalid.");
+            let seller = data[0];
+            let buyer = data[1];
+            let total = parseInt(data[2]);
+            if (this.signer !== seller)
+                throw new InvalidTransaction("You are not the seller.");
+            if (data[3] === 'terminated')
+                throw new InvalidTransaction("This transaction already terminated.");
+            if (data[3] !== 'paid')
+                throw new InvalidTransaction("This transaction not paid yet or canceled.");
+            let sellerCoin = new WtrCoin(this.context, seller);
+            
+            return sellerCoin.getBalance().then ((coins) => {
+                console.log("Seller address :" + sellerCoin.address);
+                let newCoins = coins + total;
+                let data = _serializeCoins(newCoins.toString());
+                let entries = {
+                    [sellerCoin.address]: data
+                } 
 
+                return this.context.setState(entries, this.timeout).then (() => {
+                    console.log("the seller got paid.");
+                    let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
+                    let decrypted = decipher.update(Buffer.from(data[4], 'hex'));
+                    decrypted = Buffer.concat([decrypted, decipher.final()]);
+                    if (decrypted !== 'disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels')
+                        throw new InvalidTransaction("Invalid key.");
+                    data = _serialize(seller, buyer, total, 'terminated', 'terminated');
+                    console.log("Padlock decrypted successfully.");
+                    entries = {
+                        [this.addresss]: data
+                    }
+
+                    return this.context.setState(entries, this.timeout);
+                });
+            });
+            
+            
+        });
     }
 }
 

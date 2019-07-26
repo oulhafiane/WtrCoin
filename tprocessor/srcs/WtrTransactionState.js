@@ -18,7 +18,7 @@ class WtrTransactionState {
             .then ((valuesAddresses) => {
                 let value = valuesAddresses[this.addresss];
                 console.log("transaction : " + this.addresss + " => " + value);
-                if (!value)
+                if (value === undefined)
                     throw new InvalidTransaction("Can't get data of this transaction.");
                 return value;
             })

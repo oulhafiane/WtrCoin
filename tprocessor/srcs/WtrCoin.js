@@ -16,7 +16,7 @@ class WtrCoin {
             .then ((values) => {
                 let coins = values[this.address];
                 console.log("testing coins : " + this.address + " => " + coins);
-                if (!coins) {
+                if (coins === undefined) {
                     return 0;
                 } else {
                     console.log("User : " + this.user + " => " + coins);

@@ -62,7 +62,7 @@ class WtrTransactionState {
                 if (coins < parseInt(total))
                     throw new InvalidTransaction("You don't have enough coins.");
                 console.log("Buyer address :" + buyerCoin.address);
-                let newCoins = coins - total
+                let newCoins = coins - total;
                 let data = _serializeCoins(newCoins.toString());
                 let entries = {
                     [buyerCoin.address]: data

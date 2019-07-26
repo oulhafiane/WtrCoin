@@ -28,13 +28,10 @@ class WtrTransactionHandler extends TransactionHandler {
                 return state.createNewTransaction(payload.total, payload.nonce);
             case 'pay':
                 state = new WtrTransactionState(context, payload.seller, payload.buyer, signer, payload.address);
-                return state.pay();
-            case 'requestKey':
-                state = new WtrTransactionState(context, payload.seller, payload.buyer, signer, payload.address);
-                return state.requestKey();
+                return state.pay(payload.key);
             case 'terminate':
                 state = new WtrTransactionState(context, payload.seller, payload.buyer, signer, payload.address);
-                return state.terminate();
+                return state.terminate(payload.key);
             default:
                 throw new InvalidTransaction("Action not found.");
         }

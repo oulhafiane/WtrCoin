@@ -6,6 +6,7 @@ class WtrPayload {
     constructor (action, address, key = null, buyer = null, seller = null, total = null, nonce = null) {
         this.action = action;
         this.address = address;
+        this.key = key;
         this.buyer = buyer;
         this.seller = seller;
         this.total = total;

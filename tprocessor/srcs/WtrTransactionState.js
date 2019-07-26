@@ -45,7 +45,7 @@ class WtrTransactionState {
         return this.context.setState(entries, this.timeout);
     }
 
-    pay () {
+    pay (key) {
         console.log("Paying a transaction...");
         return this.getTransaction().then ((transaction) => {
             let data = transaction.toString().split(',');
@@ -73,7 +73,7 @@ class WtrTransactionState {
 
                 return this.context.setState(entries, this.timeout).then (() => {
                     console.log("the transaction paid.");
-                    let mykey = crypto.createCipher('aes-256-cbc', payload.key);
+                    let mykey = crypto.createCipher('aes-256-cbc', key);
                     let padlock = mykey.update('abc', 'utf8', 'hex');
                     padlock += mykey.update.final('hex');
                     data = _serialize(seller, buyer, total, 'paid', padlock);

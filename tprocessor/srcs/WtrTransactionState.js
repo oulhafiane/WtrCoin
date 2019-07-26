@@ -66,9 +66,7 @@ class WtrTransactionState {
                 } 
 
                 return this.context.setState(entries, this.timeout).then (() => {
-                    let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
-                    let padlock = cipher.update('disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels');
-                    padlock = Buffer.concat([padlock, cipher.final()]);
+                    padlock = _crypt('disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels', key, iv);
                     data = _serialize(seller, buyer, total, 'paid', padlock.toString('hex'));
                     entries = {
                         [this.addresss]: data
@@ -107,9 +105,7 @@ class WtrTransactionState {
                 } 
 
                 return this.context.setState(entries, this.timeout).then (() => {
-                    let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
-                    let decrypted = decipher.update(Buffer.from(padlock, 'hex'));
-                    decrypted = Buffer.concat([decrypted, decipher.final()]);
+                    decrypted = _decrypt(padlock, key, iv);
                     if (decrypted.toString() !== 'disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels')
                         throw new InvalidTransaction("Invalid key.");
                     data = _serialize(seller, buyer, total, 'terminated', 'terminated');
@@ -124,6 +120,22 @@ class WtrTransactionState {
             
         });
     }
+}
+
+const _crypt = (data, key, iv) => {
+    let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
+    let padlock = cipher.update(data);
+    padlock = Buffer.concat([padlock, cipher.final()]);
+
+    return padlock;
+}
+
+const _decrypt = (padlock, key, iv) => {
+    let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
+    let decrypted = decipher.update(Buffer.from(padlock, 'hex'));
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+
+    return decrypted;
 }
 
 const _serialize = (seller, buyer, total, status = null, padlock = null) => {

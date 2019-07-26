@@ -55,6 +55,8 @@ class WtrTransactionState {
             let total = parseInt(data[2]);
             if (this.signer !== buyer)
                 throw new InvalidTransaction("You are not the buyer.");
+            if (data.length === 4 && data[3] === 'paid')
+                throw new InvalidTransaction("This transaction already paid");
             let buyerCoin = new WtrCoin(this.context, buyer);
 
 
@@ -70,7 +72,11 @@ class WtrTransactionState {
 
                 return this.context.setState(entries, this.timeout).then (() => {
                     console.log("the transaction paid.");
-                    data = _serialize(seller, buyer, total, 'paid');
+                    let mykey = crypto.createCipher('aes-256-cbc', payload.key);
+                    let padlock = mykey.update('abc', 'utf8', 'hex');
+                    padlock += mykey.update.final('hex');
+                    data = _serialize(seller, buyer, total, 'paid', padlock);
+                    console.log("Padlock crypted : " + padlock);
                     entries = {
                         [this.addresss]: data
                     }

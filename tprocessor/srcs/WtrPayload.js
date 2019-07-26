@@ -3,7 +3,7 @@ const { WtrCoinPayload } = require('./WtrCoinPayload');
 const cbor = require('cbor');
 
 class WtrPayload {
-    constructor (action, address, buyer = null, seller = null, total = null, nonce = null) {
+    constructor (action, address, key = null, buyer = null, seller = null, total = null, nonce = null) {
         this.action = action;
         this.address = address;
         this.buyer = buyer;
@@ -24,19 +24,20 @@ class WtrPayload {
                 return new WtrPayload(
                     payload.action,
                     null,
+                    null,
                     payload.buyer,
                     payload.seller,
                     payload.total,
                     payload.nonce
                 )
             case 'pay':
-            case 'requestKey':
             case 'terminate':
-                if (null === payload.address)
+                if (null === payload.address || null === payload.key)
                     throw new InvalidTransaction('Address not found.');
                 return new WtrPayload(
                     payload.action,
-                    payload.address
+                    payload.address,
+                    payload.key
                 )
             default:
                 throw new InvalidTransaction("Action not recognized.");

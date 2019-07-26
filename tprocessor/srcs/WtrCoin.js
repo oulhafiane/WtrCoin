@@ -15,7 +15,8 @@ class WtrCoin {
         return this.context.getState([this.address], this.timeout)
             .then ((values) => {
                 let coins = values[this.address];
-                if (null === coins || !Object.keys(coins).length) {
+                console.log("testing coins : " + coins);
+                if (!coins) {
                     return 0;
                 } else {
                     console.log("User : " + this.user + " => " + coins);

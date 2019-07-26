@@ -17,7 +17,8 @@ class WtrTransactionState {
         return this.context.getState([this.addresss], this.timeout)
             .then ((valuesAddresses) => {
                 let value = valuesAddresses[this.addresss];
-                if (!Object.keys(value).length)
+                console.log("transaction : " + this.addresss + " => " + value);
+                if (!value)
                     throw new InvalidTransaction("Can't get data of this transaction.");
                 return value;
             })

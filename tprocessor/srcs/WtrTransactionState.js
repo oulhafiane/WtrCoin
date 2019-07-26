@@ -2,6 +2,7 @@ const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
 const { SERVER_PUB_KEY } = require('../config');
 const { _hash, NAMESPACE } = require('./Helper');
 const { WtrCoin, _serializeCoins } = require('./WtrCoin');
+const crypto = require('crypto');
 
 class WtrTransactionState {
     constructor (context, seller, buyer, signer, addresss = null) {

@@ -33,11 +33,8 @@ class WtrCoin {
             throw new InvalidTransaction("You are not the minter, you are " + this.signer);
         return this.getBalance().then((coins) => {
             if (isNaN(coins))
-                console.log("okk ye");
-            else
-                console.log("mint coins : " + coins);
-            return ;
-            let newCoins = parseInt(coinsToDeposit) + parseInt(coins);
+                coins = 0;
+            let newCoins = parseInt(coinsToDeposit) + coins;
             let data = _serializeCoins(newCoins.toString());
             let entries = {
                 [this.address]: data

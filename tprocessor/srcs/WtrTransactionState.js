@@ -76,7 +76,6 @@ class WtrTransactionState {
                     let cipher = crypto.createCipher('aes-256-cbc', Buffer.from(key));
                     let padlock = cipher.update('abc');
                     padlock = Buffer.concat([padlock, cipher.final()]);
-                    padlock += mykey.update.final('hex');
                     data = _serialize(seller, buyer, total, 'paid', padlock.toString('hex'));
                     console.log("Padlock crypted : " + padlock);
                     entries = {

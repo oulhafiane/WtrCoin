@@ -119,7 +119,8 @@ class WtrTransactionState {
                     let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
                     let decrypted = decipher.update(Buffer.from(padlock, 'hex'));
                     decrypted = Buffer.concat([decrypted, decipher.final()]);
-                    if (decrypted !== 'disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels')
+                    console.log(decrypted.toString());
+                    if (decrypted.toString() !== 'disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels')
                         throw new InvalidTransaction("Invalid key.");
                     data = _serialize(seller, buyer, total, 'terminated', 'terminated');
                     console.log("Padlock decrypted successfully.");

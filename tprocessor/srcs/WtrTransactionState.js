@@ -45,7 +45,7 @@ class WtrTransactionState {
         return this.context.setState(entries, this.timeout);
     }
 
-    pay (key) {
+    pay (key, iv) {
         console.log("Paying a transaction...");
         return this.getTransaction().then ((transaction) => {
             let data = transaction.toString().split(',');
@@ -73,8 +73,8 @@ class WtrTransactionState {
 
                 return this.context.setState(entries, this.timeout).then (() => {
                     console.log("the transaction paid.");
-                    let cipher = crypto.createCipher('aes-256-cbc', Buffer.from(key));
-                    let padlock = cipher.update('abc');
+                    let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
+                    let padlock = cipher.update('disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels');
                     padlock = Buffer.concat([padlock, cipher.final()]);
                     data = _serialize(seller, buyer, total, 'paid', padlock.toString('hex'));
                     console.log("Padlock crypted : " + padlock);
@@ -86,13 +86,6 @@ class WtrTransactionState {
                 });
             });
         })
-    }
-
-    requestKey () {
-        //check status if paid
-   //     var mykey = crypto.createCipher('aes-128-cbc', 'mypassword');
-   //     var mystr = mykey.update('abc', 'utf8', 'hex')
-   //     mystr += mykey.update.final('hex');
     }
 
     terminate () {

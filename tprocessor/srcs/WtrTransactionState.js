@@ -56,7 +56,7 @@ class WtrTransactionState {
             let total = parseInt(data[2]);
             if (this.signer !== buyer)
                 throw new InvalidTransaction("You are not the buyer.");
-            if (data.length === 4 && data[3] === 'paid')
+            if (data.length >= 4 && data[3] === 'paid')
                 throw new InvalidTransaction("This transaction already paid");
             let buyerCoin = new WtrCoin(this.context, buyer);
 

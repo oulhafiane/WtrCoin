@@ -97,6 +97,7 @@ class WtrTransactionState {
             let seller = data[0];
             let buyer = data[1];
             let total = parseInt(data[2]);
+            let padlock = data[4];
             if (this.signer !== seller)
                 throw new InvalidTransaction("You are not the seller.");
             if (data[3] === 'terminated')
@@ -116,7 +117,7 @@ class WtrTransactionState {
                 return this.context.setState(entries, this.timeout).then (() => {
                     console.log("the seller got paid.");
                     let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key, 'base64'), Buffer.from(iv, 'base64'));
-                    let decrypted = decipher.update(Buffer.from(data[4], 'hex'));
+                    let decrypted = decipher.update(Buffer.from(padlock, 'hex'));
                     decrypted = Buffer.concat([decrypted, decipher.final()]);
                     if (decrypted !== 'disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels')
                         throw new InvalidTransaction("Invalid key.");

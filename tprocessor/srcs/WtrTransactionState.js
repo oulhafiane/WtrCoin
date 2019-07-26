@@ -73,10 +73,11 @@ class WtrTransactionState {
 
                 return this.context.setState(entries, this.timeout).then (() => {
                     console.log("the transaction paid.");
-                    let mykey = crypto.createCipher('aes-256-cbc', key);
-                    let padlock = mykey.update('abc', 'utf8', 'hex');
+                    let cipher = crypto.createCipher('aes-256-cbc', Buffer.from(key));
+                    let padlock = cipher.update('abc');
+                    let padlock = Buffer.concat([padlock, cipher.final()]);
                     padlock += mykey.update.final('hex');
-                    data = _serialize(seller, buyer, total, 'paid', padlock);
+                    data = _serialize(seller, buyer, total, 'paid', padlock.toString('hex'));
                     console.log("Padlock crypted : " + padlock);
                     entries = {
                         [this.addresss]: data

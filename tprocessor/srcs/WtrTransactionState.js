@@ -67,7 +67,8 @@ class WtrTransactionState {
                     [buyerCoin.address]: data
                 } 
 
-                return this.context.setState(entries, this.timeout).then (() => {
+                return this.context.setState(entries, this.timeout);
+   /*             return this.context.setState(entries, this.timeout).then (() => {
                     console.log("the transaction paid.");
                     data = _serialize(seller, buyer, total, 'paid');
                     entries = {
@@ -76,6 +77,7 @@ class WtrTransactionState {
 
                     return this.context.setState(entries, this.timeout);
                 });
+    */
             });
         })
     }

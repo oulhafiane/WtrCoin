@@ -84,7 +84,6 @@ const _getPeriod = (type, parameters, periodParam = null) => {
             break;
         case 'auction':
             periodParam = parseInt(periodParam);
-            console.log("Period " + periodParam);
             if (periodParam === 1)
                 period = parameters.get('smallPeriodAuctionBid');
             else if (periodParam === 2)
@@ -114,6 +113,7 @@ const _getFees = (type, parameters, periodParam = null) => {
             fees = parameters.get('feesBulkPurchaseOffer');
             break;
         case 'auction':
+            console.log("PeriodBuf " + periodParam);
             periodParam = parseInt(periodParam);
             console.log("Period " + periodParam);
             if (periodParam === 1)

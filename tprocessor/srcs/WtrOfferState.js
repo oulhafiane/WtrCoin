@@ -37,8 +37,8 @@ class WtrOfferState {
                 if (null === parametersBuf)
                     throw new InternalError("Cannot find any parameters.");
                 let parameters = _deserializeParameters(parametersBuf);
-                let fees = _getFees(parameters);
-                let period = _getPeriod(parameters);
+                let fees = _getFees(type, parameters);
+                let period = _getPeriod(type, parameters);
                 let userCoin = new WtrCoin(this.context, this.signer);
                 return userCoin.getBalance().then ((coinsBuf) => {
                     if (null === coinsBuf)
@@ -69,7 +69,7 @@ class WtrOfferState {
     }
 }
 
-const _getPeriod = (parameters, periodParam = null) => {
+const _getPeriod = (type, parameters, periodParam = null) => {
     let period;
     switch (type) {
         case 'sale':
@@ -95,7 +95,7 @@ const _getPeriod = (parameters, periodParam = null) => {
     return parseInt(period);
 }
 
-const _getFees = (parameters) => {
+const _getFees = (type, parameters) => {
     let fees;
     switch (type) {
         case 'sale':

@@ -82,6 +82,7 @@ const _getPeriod = (type, parameters, periodParam = null) => {
             break;
         case 'auction':
             periodParam = parseInt(periodParam);
+            console.log("Period " + periodParam);
             if (periodParam === 1)
                 period = parameters.get('smallPeriodAuctionBid');
             else if (periodParam === 2)

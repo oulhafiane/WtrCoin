@@ -39,6 +39,8 @@ class WtrOfferState {
                 let parameters = _deserializeParameters(parametersBuf);
                 let fees = _getFees(type, parameters);
                 let period = _getPeriod(type, parameters);
+                if (isNaN(fees) || isNaN(period))
+                    throw new InternalError("Cannot get the right parameters.");
                 let userCoin = new WtrCoin(this.context, this.signer);
                 return userCoin.getBalance().then ((coinsBuf) => {
                     if (null === coinsBuf)
@@ -54,9 +56,10 @@ class WtrOfferState {
                     }
             
                     return this.context.setState(entries, this.timeout).then (() => {
-                        let endDate = new Date(startDate.toString());
+                        startDate = startDate.toString();
+                        let endDate = new Date(startDate);
                         endDate.setDate(endDate.getDate() + period);
-                        let data = _serializeOffer(this.offer, type, endDate, this.signer);
+                        let data = _serializeOffer(this.offer, type, startDate, endDate.toString(), this.signer);
                         let entries = {
                             [this.address]: data
                         }
@@ -117,9 +120,9 @@ const _getFees = (type, parameters) => {
     return parseInt(fees);
 }
 
-const _serializeOffer = (offer, type, endDate, owner, bids = null) => {
+const _serializeOffer = (offer, type, startDate, endDate, owner, bids = null, confirmed = null) => {
     let data = [];
-    data.push([offer, type, endDate, owner, bids].join(','));
+    data.push([offer, type, startDate, endDate, owner, bids, confirmed].join(','));
 
     return Buffer.from(data.join(''));
 }

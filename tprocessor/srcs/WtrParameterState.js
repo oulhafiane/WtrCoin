@@ -56,7 +56,7 @@ const _serializeParameters = (parameters) => {
 }
 
 const _deserializeParameters = (parametersBuf) => {
-    let parameters = parametersBuf.split('|').map(x => x.split(','));
+    let parameters = parametersBuf.toString().split('|').map(x => x.split(','));
 
     return new Map(parameters);
 }

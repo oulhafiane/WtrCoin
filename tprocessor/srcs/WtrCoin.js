@@ -16,9 +16,9 @@ class WtrCoin {
             .then ((values) => {
                 let coins = values[this.address];
                 if (coins === undefined) {
-                    return 0;
+                    return null;
                 } else {
-                    return parseInt(coins);
+                    return coins;
                 }
             })
             .catch ((error) => {
@@ -29,11 +29,20 @@ class WtrCoin {
     mintWtrCoin(coinsToDeposit) {
         if (MINTER_PUB_KEY !== this.signer)
             throw new InvalidTransaction("You are not the minter.");
-        return this.getBalance().then((coins) => {
-            if (isNaN(coins))
-                coins = 0;
-            let newCoins = parseInt(coinsToDeposit) + coins;
-            let data = _serializeCoins(newCoins.toString());
+        return this.getBalance().then((coinsBuf) => {
+            let coins = [];
+            if (null === coinsBuf) {
+                coins[0] = 0;
+                coins[1] = 0;
+            } else {
+                coins = coinsBuf.toString().split(',');
+            }
+            if (isNaN(coins[0]))
+                coins[0] = 0;
+            if (isNaN(coins[1]))
+                coins[1] = 0;
+            let newCoins = parseInt(coinsToDeposit) + coins[0];
+            let data = _serializeCoins(newCoins.toString(), coins[1].toString());
             let entries = {
                 [this.address]: data
             }
@@ -43,9 +52,9 @@ class WtrCoin {
     }
 }
 
-const _serializeCoins = (coins) => {
+const _serializeCoins = (coins, onhold) => {
     let data = [];
-    data.push([coins].join(''));
+    data.push([coins, onhold].join(','));
 
     return Buffer.from(data.join(''));
 }

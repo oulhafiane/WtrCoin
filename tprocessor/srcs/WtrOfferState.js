@@ -81,12 +81,13 @@ const _getPeriod = (type, parameters, periodParam = null) => {
             period = parameters.get('periodOffer');
             break;
         case 'auction':
-            periodParam = parseInt(periodParam);
-            if (periodParam === '1')
+            periodParam = parseInt(periodParam.toString());
+            console.log("periodParam : " + periodParam);
+            if (periodParam === 1)
                 period = parameters.get('smallPeriodAuctionBid');
-            else if (periodParam === '2')
+            else if (periodParam === 2)
                 period = parameters.get('mediumPeriodAuctionBid');
-            else if (periodParam === '3')
+            else if (periodParam === 3)
                 period = parameters.get('largePeriodAuctionBid');
             else
                 throw new InvalidTransaction("Period of auction is invalid.");
@@ -111,11 +112,12 @@ const _getFees = (type, parameters, periodParam = null) => {
             fees = parameters.get('feesBulkPurchaseOffer');
             break;
         case 'auction':
-            if (periodParam === '1')
+            periodParam = parseInt(periodParam.toString());
+            if (periodParam === 1)
                 fees = parameters.get('feesSmallAuctionBid');
-            else if (periodParam === '2')
+            else if (periodParam === 2)
                 fees = parameters.get('feesMediumAuctionBid');
-            else if (periodParam === '3')
+            else if (periodParam === 3)
                 fees = parameters.get('feesLargeAuctionBid');
             else
                 throw new InvalidTransaction("Period of auction is invalid.");

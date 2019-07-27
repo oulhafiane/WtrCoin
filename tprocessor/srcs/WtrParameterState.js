@@ -14,7 +14,7 @@ class WtrParameterState {
         return this.context.getState([this.address], this.timeout)
             .then ((values) => {
                 let parameters = values[this.address];
-                if (parameterss === undefined) {
+                if (parameters === undefined) {
                     return null;
                 } else {
                     return parameters;

@@ -1,13 +1,13 @@
 const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
 const { ADMIN_PUB_KEY } = require('../config');
-const { _hash, NAMESPACE } = require('./Helper');
+const { _makeWtrAddress } = require('./Helper');
 
 class WtrParameterState {
-    constructor (context, signer = null) {
+    constructor (context, signer) {
         this.context = context;
         this.timeout = 500;
         this.signer = signer;
-        this.address = _makeWtrParameterAddress('WtrParameters');
+        this.address = _makeWtrAddress('WtrParameters');
     }
 
     getParameters() {
@@ -60,8 +60,6 @@ const _deserializeParameters = (parametersBuf) => {
 
     return new Map(parameters);
 }
-
-const _makeWtrParameterAddress = (x) => NAMESPACE + _hash(x);
 
 module.exports = {
     WtrParameterState,

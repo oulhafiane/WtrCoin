@@ -4,6 +4,7 @@ const { WtrPayload } = require('./WtrPayload');
 const { NAMESPACE, WtrTransactionState } = require('./WtrTransactionState');
 const { WtrCoin } = require('./WtrCoin');
 const { WtrParameterState } = require('./WtrParameterState');
+const { WtrOfferState } = require('./WtrOfferState');
 const { FAMILY_NAME } = require('../config');
 
 class WtrTransactionHandler extends TransactionHandler {
@@ -20,6 +21,9 @@ class WtrTransactionHandler extends TransactionHandler {
         payload = WtrPayload.fromBytes(transactionRequest.payload);
 
         switch (payload.action) {
+            case 'createOffer':
+                state = new WtrOfferState(context, signer, payload.offer);
+                return state.createOffer(payload.type);
             case 'addParameter':
                 state = new WtrParameterState(context, signer);
                 return state.addParameter(payload.name, payload.value);

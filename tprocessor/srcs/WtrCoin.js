@@ -1,14 +1,14 @@
 const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
 const { MINTER_PUB_KEY } = require('../config');
-const { _hash, NAMESPACE } = require('./Helper');
+const { _makeWtrAddress } = require('./Helper');
 
 class WtrCoin {
-    constructor (context, user, signer = null) {
+    constructor (context, user, signer) {
         this.context = context;
         this.timeout = 500;
         this.signer = signer;
         this.user = user;
-        this.address = _makeWtrCoinAddress(user);
+        this.address = _makeWtrAddress(user);
     }
 
     getBalance() {
@@ -50,6 +50,8 @@ class WtrCoin {
             return this.context.setState(entries, this.timeout);
         });
     }
+
+
 }
 
 const _serializeCoins = (coins, onhold) => {
@@ -58,8 +60,6 @@ const _serializeCoins = (coins, onhold) => {
 
     return Buffer.from(data.join(''));
 }
-
-const _makeWtrCoinAddress = (x) => NAMESPACE + _hash(x);
 
 module.exports = {
     WtrCoin,

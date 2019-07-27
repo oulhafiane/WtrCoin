@@ -1,4 +1,4 @@
-const { InternalError, InvalidTransaction } = require('sawtooth-sdk').exceptions;
+const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
 const { _makeWtrAddress } = require('./Helper');
 const { WtrParameterState, _deserializeParameters } = require('./WtrParameterState');
 const { WtrCoin, _serializeCoins } = require('./WtrCoin');
@@ -35,12 +35,12 @@ class WtrOfferState {
                 throw new InvalidTransaction("Type of offer is invalid.");
             return new WtrParameterState(this.context).getParameters().then((parametersBuf) => {
                 if (null === parametersBuf)
-                    throw new InternalError("Cannot find any parameters.");
+                    throw new InvalidTransaction("Cannot find any parameters.");
                 let parameters = _deserializeParameters(parametersBuf);
                 let fees = _getFees(type, parameters);
                 let period = _getPeriod(type, parameters);
                 if (isNaN(fees) || isNaN(period))
-                    throw new InternalError("Cannot get the right parameters.");
+                    throw new InvalidTransaction("Cannot get the right parameters.");
                 let userCoin = new WtrCoin(this.context, this.signer);
                 return userCoin.getBalance().then ((coinsBuf) => {
                     if (null === coinsBuf)
@@ -65,10 +65,10 @@ class WtrOfferState {
                         }
 
                         return this.context.setState(entries, this.timeout);
-                    });
-                });
-            });
-        });
+                    }).catch((error) => { throw new InvalidTransaction(error)});
+                }).catch((error) => { throw new InvalidTransaction(error)});;
+            }).catch((error) => { throw new InvalidTransaction(error)});;
+        }).catch((error) => { throw new InvalidTransaction(error)});;
     }
 }
 
@@ -82,11 +82,11 @@ const _getPeriod = (type, parameters, periodParam = null) => {
             break;
         case 'auction':
             periodParam = parseInt(periodParam);
-            if (periodParam === 1)
+            if (periodParam === '1')
                 period = parameters.get('smallPeriodAuctionBid');
-            else if (periodParam === 2)
+            else if (periodParam === '2')
                 period = parameters.get('mediumPeriodAuctionBid');
-            else if (periodParam === 3)
+            else if (periodParam === '3')
                 period = parameters.get('largePeriodAuctionBid');
             else
                 throw new InvalidTransaction("Period of auction is invalid.");
@@ -98,20 +98,27 @@ const _getPeriod = (type, parameters, periodParam = null) => {
     return parseInt(period);
 }
 
-const _getFees = (type, parameters) => {
+const _getFees = (type, parameters, periodParam = null) => {
     let fees;
     switch (type) {
         case 'sale':
             fees = parameters.get('feesSaleOffer');
             break;
         case 'purchase':
-            fees = parameters.get('feesSaleOffer');
+            fees = parameters.get('feesPurchaseOffer');
             break;
         case 'bulkPurchase':
-            fees = parameters.get('feesSaleOffer');
+            fees = parameters.get('feesBulkPurchaseOffer');
             break;
         case 'auction':
-            fees = parameters.get('feesSaleOffer');
+            if (periodParam === '1')
+                fees = parameters.get('feesSmallAuctionBid');
+            else if (periodParam === '2')
+                fees = parameters.get('feesMediumAuctionBid');
+            else if (periodParam === '3')
+                fees = parameters.get('feesLargeAuctionBid');
+            else
+                throw new InvalidTransaction("Period of auction is invalid.");
             break;
         default:
             throw new InvalidTransaction("Type of offer is invalid.");

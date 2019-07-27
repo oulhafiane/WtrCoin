@@ -20,7 +20,7 @@ class WtrOfferPayload {
                     throw new InvalidTransaction("Period of auction not found or incorrect.");
                 let period = null;
                 if (payload.type === 'auction')
-                    period = payload.type;
+                    period = payload.period;
                 return new WtrOfferPayload(
                     payload.action,
                     payload.offer,

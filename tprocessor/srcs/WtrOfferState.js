@@ -48,7 +48,7 @@ class WtrOfferState {
                         throw new InvalidTransaction("You don't have enough coins.");
                     coins[0] = parseInt(coins[0]) - fees; 
                     coins[1] = parseInt(coins[1]) + fees;
-                    let data = _serializeCoins(newCoins.toString(), coins[1].toString());
+                    let data = _serializeCoins(coins[0].toString(), coins[1].toString());
                     let entries = {
                         [userCoin.address]: data
                     }

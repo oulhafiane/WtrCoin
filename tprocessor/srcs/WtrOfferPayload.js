@@ -26,7 +26,7 @@ class WtrOfferPayload {
                     payload.offer,
                     payload.startDate,
                     payload.type,
-                    payload.period
+                    period
                 );
             case 'leave':
             case 'bid':

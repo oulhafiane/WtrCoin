@@ -27,7 +27,7 @@ class WtrOfferState {
             });
     }
 
-    createOffer(type, startDate) {
+    createOffer(type, startDate, periodParam) {
         return this.getOffer().then((offer) => {
             if (null !== offer)
                 throw new InvalidTransaction("This offer already exists.");
@@ -37,8 +37,8 @@ class WtrOfferState {
                 if (null === parametersBuf)
                     throw new InvalidTransaction("Cannot find any parameters.");
                 let parameters = _deserializeParameters(parametersBuf);
-                let fees = _getFees(type, parameters);
-                let period = _getPeriod(type, parameters);
+                let fees = _getFees(type, parameters, periodParam);
+                let period = _getPeriod(type, parameters, periodParam);
                 if (isNaN(fees) || isNaN(period))
                     throw new InvalidTransaction("Cannot get the right parameters.");
                 let userCoin = new WtrCoin(this.context, this.signer);
@@ -81,8 +81,7 @@ const _getPeriod = (type, parameters, periodParam = null) => {
             period = parameters.get('periodOffer');
             break;
         case 'auction':
-            periodParam = parseInt(periodParam.toString());
-            console.log("periodParam : " + periodParam);
+            periodParam = parseInt(periodParam);
             if (periodParam === 1)
                 period = parameters.get('smallPeriodAuctionBid');
             else if (periodParam === 2)
@@ -112,7 +111,7 @@ const _getFees = (type, parameters, periodParam = null) => {
             fees = parameters.get('feesBulkPurchaseOffer');
             break;
         case 'auction':
-            periodParam = parseInt(periodParam.toString());
+            periodParam = parseInt(periodParam);
             if (periodParam === 1)
                 fees = parameters.get('feesSmallAuctionBid');
             else if (periodParam === 2)

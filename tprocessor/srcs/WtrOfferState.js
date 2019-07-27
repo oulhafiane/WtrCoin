@@ -37,8 +37,10 @@ class WtrOfferState {
                 if (null === parametersBuf)
                     throw new InvalidTransaction("Cannot find any parameters.");
                 let parameters = _deserializeParameters(parametersBuf);
+                console.log("Statring...");
                 let fees = _getFees(type, parameters, periodParam);
                 let period = _getPeriod(type, parameters, periodParam);
+                console.log("Dazna...");
                 if (isNaN(fees) || isNaN(period))
                     throw new InvalidTransaction("Cannot get the right parameters.");
                 let userCoin = new WtrCoin(this.context, this.signer);
@@ -65,10 +67,10 @@ class WtrOfferState {
                         }
 
                         return this.context.setState(entries, this.timeout);
-                    }).catch((error) => { throw new InvalidTransaction(error)});
-                }).catch((error) => { throw new InvalidTransaction(error)});;
-            }).catch((error) => { throw new InvalidTransaction(error)});;
-        }).catch((error) => { throw new InvalidTransaction(error)});;
+                    });
+                });
+            });
+        });
     }
 }
 
@@ -113,6 +115,7 @@ const _getFees = (type, parameters, periodParam = null) => {
             break;
         case 'auction':
             periodParam = parseInt(periodParam);
+            console.log("Period " + periodParam);
             if (periodParam === 1)
                 fees = parameters.get('feesSmallAuctionBid');
             else if (periodParam === 2)

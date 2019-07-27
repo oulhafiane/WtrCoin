@@ -7,7 +7,7 @@ class WtrParameterState {
         this.context = context;
         this.timeout = 500;
         this.signer = signer;
-        this.address = _makeWtrParameterAddress(user);
+        this.address = _makeWtrParameterAddress('WtrParameters');
     }
 
     getParameters() {
@@ -22,7 +22,7 @@ class WtrParameterState {
             })
             .catch ((error) => {
                 throw new InvalidTransaction(error);
-            })
+            });
     }
 
     addParameter(param, value) {
@@ -30,9 +30,9 @@ class WtrParameterState {
             throw new InvalidTransaction("You are not administrator.");
         return this.getParameters().then((parametersBuf) => {
             if (null === parametersBuf)
-                parametersBuf = [];
+                parametersBuf = new Map([]);
             let parameters = _deserializeParameters(parametersBuf);
-            parameters[param] = value;
+            parameters.set(param, value);
             let data = _serializeParameters(parameters);
             let entries = {
                 [this.address]: data
@@ -45,13 +45,20 @@ class WtrParameterState {
 
 const _serializeParameters = (parameters) => {
     let data = [];
-    //data.push([coins].join(''));
+    for (let parameter of parameters) {
+        let name = parameter[0];
+        let value = parameter[1];
+        data.push([name, value].join(','));
+    }
+    data.sort();
 
-//    return Buffer.from(data.join(''));
+    return Buffer.from(data.join('|'));
 }
 
 const _deserializeParameters = (parametersBuf) => {
+    let parameters = parametersBuf.split('|').map(x => x.split(','));
 
+    return new Map(parameters);
 }
 
 const _makeWtrParameterAddress = (x) => NAMESPACE + _hash(x);

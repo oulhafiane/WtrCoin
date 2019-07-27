@@ -3,6 +3,7 @@ const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
 const { WtrPayload } = require('./WtrPayload');
 const { NAMESPACE, WtrTransactionState } = require('./WtrTransactionState');
 const { WtrCoin } = require('./WtrCoin');
+const { WtrParameterState } = require('./WtrParameterState');
 const { FAMILY_NAME } = require('../config');
 
 class WtrTransactionHandler extends TransactionHandler {
@@ -19,6 +20,9 @@ class WtrTransactionHandler extends TransactionHandler {
         payload = WtrPayload.fromBytes(transactionRequest.payload);
 
         switch (payload.action) {
+            case 'addParameter':
+                state = new WtrParameterState(context, signer);
+                return state.addParameter(payload.name, payload.value);
             case 'mint':
                 state = new WtrCoin(context, payload.user, signer); 
                 return state.mintWtrCoin(payload.coins);

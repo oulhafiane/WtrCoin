@@ -3,7 +3,7 @@ const { ADMIN_PUB_KEY } = require('../config');
 const { _makeWtrAddress } = require('./Helper');
 
 class WtrParameterState {
-    constructor (context, signer) {
+    constructor (context, signer = null) {
         this.context = context;
         this.timeout = 500;
         this.signer = signer;
@@ -14,7 +14,7 @@ class WtrParameterState {
         return this.context.getState([this.address], this.timeout)
             .then ((values) => {
                 let parameters = values[this.address];
-                if (parameters === undefined) {
+                if (!parameters.toString()) {
                     return null;
                 } else {
                     return parameters;
@@ -63,4 +63,5 @@ const _deserializeParameters = (parametersBuf) => {
 
 module.exports = {
     WtrParameterState,
+    _deserializeParameters
 }

@@ -5,7 +5,7 @@ const { WtrCoin, _serializeCoins } = require('./WtrCoin');
 const crypto = require('crypto');
 
 class WtrTransactionState {
-    constructor (context, seller, buyer, signer, addresss = null) {
+    constructor (context, seller, buyer, signer = null, addresss = null) {
         this.context = context;
         this.timeout = 500;
         this.seller = seller;
@@ -18,7 +18,7 @@ class WtrTransactionState {
         return this.context.getState([this.addresss], this.timeout)
             .then ((valuesAddresses) => {
                 let value = valuesAddresses[this.addresss];
-                if (value === undefined)
+                if (!value.toString())
                     throw new InvalidTransaction("Can't get data of this transaction.");
                 return value;
             })

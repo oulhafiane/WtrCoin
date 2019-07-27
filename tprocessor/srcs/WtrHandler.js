@@ -22,7 +22,7 @@ class WtrTransactionHandler extends TransactionHandler {
 
         switch (payload.action) {
             case 'createOffer':
-                state = new WtrOfferState(context, signer, payload.offer);
+                state = new WtrOfferState(context, payload.offer, signer);
                 return state.createOffer(payload.type);
             case 'addParameter':
                 state = new WtrParameterState(context, signer);

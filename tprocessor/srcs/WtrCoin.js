@@ -3,7 +3,7 @@ const { MINTER_PUB_KEY } = require('../config');
 const { _makeWtrAddress } = require('./Helper');
 
 class WtrCoin {
-    constructor (context, user, signer) {
+    constructor (context, user, signer = null) {
         this.context = context;
         this.timeout = 500;
         this.signer = signer;
@@ -15,7 +15,7 @@ class WtrCoin {
         return this.context.getState([this.address], this.timeout)
             .then ((values) => {
                 let coins = values[this.address];
-                if (coins === undefined) {
+                if (!coins.toString()) {
                     return null;
                 } else {
                     return coins;

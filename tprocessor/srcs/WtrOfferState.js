@@ -27,6 +27,59 @@ class WtrOfferState {
             });
     }
 
+    enterAuction(total) {
+        return this.getOffer().then((offer) => {
+            if (null !== offer)
+                throw new InvalidTransaction("Offer not found");
+            offer = offer.toString().split(',');
+            if ("auction" !== offer[1])
+                throw new InvalidTransaction("This offer is not and auction.");
+            let addressAuction = _makeWtrAddress(this.offer + "-auction");
+            return this.context.getState([addressAuction], this.timeout)
+                .then((auctions) => {
+                    let auction = auctions[addressAuction];
+                    if (!auction.toString()) {
+                        auction = new Map([]);
+                    }
+                    let bids = _deserializeBids(auction);
+                    let bid = bids.get(this.signer);
+                    if (undefined === bid) {
+                        let userCoin = new WtrCoin(this.context, this.signer);
+                        return userCoin.getBalance().then((coinsBuf) => {
+                            if (null === coinsBuf)
+                                throw new InvalidTransaction("You don't have enough coins.");
+                            let coins = coinsBuf.toString().split(',');
+                            return new WtrParameterState(this.context).getParameters().then((parametersBuf) => {
+                                if (null === parametersBuf)
+                                    throw new InvalidTransaction("Cannot find any parameters.");
+                                let fees = _deserializeParameters(parametersBuf).get('feesBid');
+                                if (isNaN(fees))
+                                    throw new InvalidTransaction("Cannot get the right parameters.");
+                                if (parseInt(coins[0]) < fees)
+                                    throw new InvalidTransaction("You don't have enough coins.");
+                                coins[0] = parseInt(coins[0]) - fees;
+                                coins[1] = parseInt(coins[1]) + fees;
+                                let data = _serializeCoins(coins[0].toString(), coins[1].toString());
+                                let entries = {
+                                    [userCoin.address]: data
+                                }
+
+                                return this.context.setState(entries, this.timeout).then(() => {
+                                    
+                                });
+                            });
+                        });
+                    } else {
+
+                    }
+                });
+        });
+    }
+
+    leaveAuction() {
+
+    }
+
     createOffer(type, startDate, periodParam) {
         return this.getOffer().then((offer) => {
             if (null !== offer)
@@ -37,31 +90,29 @@ class WtrOfferState {
                 if (null === parametersBuf)
                     throw new InvalidTransaction("Cannot find any parameters.");
                 let parameters = _deserializeParameters(parametersBuf);
-                console.log("Statring...");
                 let fees = _getFees(type, parameters, periodParam);
                 let period = _getPeriod(type, parameters, periodParam);
-                console.log("Dazna...");
                 if (isNaN(fees) || isNaN(period))
                     throw new InvalidTransaction("Cannot get the right parameters.");
                 let userCoin = new WtrCoin(this.context, this.signer);
-                return userCoin.getBalance().then ((coinsBuf) => {
+                return userCoin.getBalance().then((coinsBuf) => {
                     if (null === coinsBuf)
                         throw new InvalidTransaction("You don't have enough coins.");
                     let coins = coinsBuf.toString().split(',');
                     if (parseInt(coins[0]) < fees)
                         throw new InvalidTransaction("You don't have enough coins.");
-                    coins[0] = parseInt(coins[0]) - fees; 
+                    coins[0] = parseInt(coins[0]) - fees;
                     coins[1] = parseInt(coins[1]) + fees;
                     let data = _serializeCoins(coins[0].toString(), coins[1].toString());
                     let entries = {
                         [userCoin.address]: data
                     }
-            
-                    return this.context.setState(entries, this.timeout).then (() => {
+
+                    return this.context.setState(entries, this.timeout).then(() => {
                         startDate = startDate.toString();
                         let endDate = new Date(startDate);
                         endDate.setDate(endDate.getDate() + period);
-                        let data = _serializeOffer(this.offer, type, startDate, endDate.toString(), this.signer);
+                        let data = _serializeOffer(this.offer, type, fees, startDate, endDate.toString(), this.signer);
                         let entries = {
                             [this.address]: data
                         }
@@ -113,9 +164,7 @@ const _getFees = (type, parameters, periodParam = null) => {
             fees = parameters.get('feesBulkPurchaseOffer');
             break;
         case 'auction':
-            console.log("PeriodBuf " + periodParam);
             periodParam = parseInt(periodParam);
-            console.log("Period " + periodParam);
             if (periodParam === 1)
                 fees = parameters.get('feesSmallAuctionBid');
             else if (periodParam === 2)
@@ -132,11 +181,38 @@ const _getFees = (type, parameters, periodParam = null) => {
     return parseInt(fees);
 }
 
-const _serializeOffer = (offer, type, startDate, endDate, owner, bids = null, confirmed = null) => {
+const _serializeOffer = (offer, type, fees, startDate, endDate, owner, confirmed = null) => {
     let data = [];
-    data.push([offer, type, startDate, endDate, owner, bids, confirmed].join(','));
+    data.push([offer, type, fees, startDate, endDate, owner, confirmed].join(','));
 
     return Buffer.from(data.join(''));
+}
+
+const _serializeBids = (bids) => {
+    let data = [];
+    for (let bid of bids) {
+        let bidder = bid[0];
+        let fees = bid[1].fees;
+        let total = bid[1].total;
+        if (bidder.indexOf('|') !== -1)
+            throw new InvalidTransaction("Bidder address cannot contain '|'");
+        if (fees.value.indexOf('|') !== -1)
+            throw new InvalidTransaction("Fees of auction cannot contain '|'");
+        if (total.value.indexOf('|') !== -1)
+            throw new InvalidTransaction("Fees of auction cannot contain '|'");
+        data.push([total, bidder, fees].join(','));
+    }
+    data.sort();
+    data.reverse();
+
+    return Buffer.from(data.join('|'));
+}
+
+const _deserializeBids = (bidsBuf) => {
+    let bids = bidsBuf.toString().split('|').map(x => x.split(','))
+        .map(x => [x[1], { fees: x[2], total: x[0] }]);
+
+    return new Map(bids);
 }
 
 module.exports = {

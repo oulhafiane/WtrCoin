@@ -14,7 +14,7 @@ class WtrOfferState {
         return this.context.getState([this.address], this.timeout)
             .then ((values) => {
                 let offer = values[this.address];
-                if (offer === undefined) {
+                if (!offer.toString()) {
                     return null;
                 } else {
                     return offer;

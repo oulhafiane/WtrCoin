@@ -86,7 +86,7 @@ class WtrOfferState {
                             });
                         });
                     } else {
-                        console.log(bids.values().next().total);
+                        console.log(JSON.stringify(bids.values().next()));
                         if (total <= parseInt(bids.values().next().total))
                             throw new InvalidTransaction("Your bid is too low.");
                         bid = {

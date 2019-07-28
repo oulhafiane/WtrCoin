@@ -103,7 +103,13 @@ class WtrTransactionState {
             let sellerCoin = new WtrCoin(this.context, seller);
             
             return sellerCoin.getBalance().then ((coinsBuf) => {
-                coinsBuf = coinsBuf.toString().split(',');
+                if (null === coinsBuf) {
+                    coinsBuf = [];
+                    coinsBuf[0] = 0;
+                    coinsBuf[1] = 0;
+                } else {
+                    coinsBuf = coinsBuf.toString().split(',');
+                }
                 let coins = parseInt(coinsBuf[0]);
                 let onhold = parseInt(coinsBuf[1]);
                 if (isNaN(coins))

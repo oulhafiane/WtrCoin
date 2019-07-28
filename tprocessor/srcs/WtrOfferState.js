@@ -64,8 +64,8 @@ class WtrOfferState {
                                     throw new InvalidTransaction("Cannot get the right parameters.");
                                 if (isNaN(coins[0]) || parseInt(coins[0]) < fees)
                                     throw new InvalidTransaction("You don't have enough coins.");
-                                coins[0] = parseInt(coins[0]) - fees;
-                                coins[1] = parseInt(coins[1]) + fees;
+                                coins[0] = parseInt(coins[0]) - parseInt(fees);
+                                coins[1] = parseInt(coins[1]) + parseInt(fees);
                                 let data = _serializeCoins(coins[0].toString(), coins[1].toString());
                                 let entries = {
                                     [userCoin.address]: data
@@ -88,7 +88,7 @@ class WtrOfferState {
                         });
                     } else {
                         bid = {
-                            fees: fees,
+                            fees: bid.fees,
                             total: total
                         };
                         bids.set(this.signer, bid);

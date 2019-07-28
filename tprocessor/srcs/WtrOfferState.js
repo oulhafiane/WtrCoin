@@ -36,7 +36,7 @@ class WtrOfferState {
                 throw new InvalidTransaction("This offer is not and auction.");
             if (this.signer === offer[5])
                 throw new InvalidTransaction("You cannot give bid in your auction.");
-            if (total <= offer[6])
+            if (total <= parseInt(offer[6]))
                 throw new InvalidTransaction("Your bid is too low.");
             let addressAuction = _makeWtrAddress(this.offer + "-auction");
             return this.context.getState([addressAuction], this.timeout)

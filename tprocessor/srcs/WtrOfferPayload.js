@@ -16,7 +16,7 @@ class WtrOfferPayload {
         payload = cbor.decodeFirstSync(payload);
         switch (payload.action) {
             case 'createOffer':
-                if (!payload.offer || !payload.type || !payload.startDate)
+                if (!payload.offer || !payload.type || !payload.startDate || !payload.total)
                     throw new InvalidTransaction('Payload incorrect.');
                 if (payload.type === 'auction' && (!payload.period || isNaN(payload.period)))
                     throw new InvalidTransaction("Period of auction not found or incorrect.");

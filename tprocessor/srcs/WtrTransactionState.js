@@ -56,12 +56,14 @@ class WtrTransactionState {
             let buyerCoin = new WtrCoin(this.context, buyer);
 
 
-            return buyerCoin.getBalance().then ((coins) => {
-                coins = parseInt(coins.toString());
+            return buyerCoin.getBalance().then ((coinsBuf) => {
+                coinsBuf = coinsBuf.toString().split(',');
+                let coins = parseInt(coinsBuf[0]);
+                let onhold = parseInt(coinsBuf[1]);
                 if (coins < parseInt(total))
                     throw new InvalidTransaction("You don't have enough coins.");
                 let newCoins = coins - total;
-                let data = _serializeCoins(newCoins.toString());
+                let data = _serializeCoins(newCoins.toString(), onhold.toString());
                 let entries = {
                     [buyerCoin.address]: data
                 } 

@@ -66,7 +66,7 @@ class WtrTransactionState {
                 } 
 
                 return this.context.setState(entries, this.timeout).then (() => {
-                    padlock = _crypt('disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels', key, iv);
+                    let padlock = _crypt('disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels', key, iv);
                     data = _serialize(seller, buyer, total, 'paid', padlock.toString('hex'));
                     entries = {
                         [this.addresss]: data
@@ -105,7 +105,7 @@ class WtrTransactionState {
                 } 
 
                 return this.context.setState(entries, this.timeout).then (() => {
-                    decrypted = _decrypt(padlock, key, iv);
+                    let decrypted = _decrypt(padlock, key, iv);
                     if (decrypted.toString() !== 'disagree yellow borrowed comment directly silicon subway largest show dilemma issues rebels')
                         throw new InvalidTransaction("Invalid key.");
                     data = _serialize(seller, buyer, total, 'terminated', 'terminated');

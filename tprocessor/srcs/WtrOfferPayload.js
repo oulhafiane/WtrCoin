@@ -2,13 +2,14 @@ const { InvalidTransaction } = require('sawtooth-sdk').exceptions;
 const cbor = require('cbor');
 
 class WtrOfferPayload {
-    constructor (action, offer, bid = null, startDate = null, type = null, period = null) {
+    constructor (action, offer, bid = null, startDate = null, type = null, period = null, total = null) {
         this.action = action;
         this.offer = offer;
         this.startDate = startDate;
         this.type = type;
         this.period = period;
         this.bid = bid;
+        this.total = total;
     }
 
     static fromBytes (payload) {
@@ -28,7 +29,8 @@ class WtrOfferPayload {
                     null,
                     payload.startDate,
                     payload.type,
-                    period
+                    period,
+                    payload.total
                 );
             case 'leaveAuction':
                 if (!payload.offer)

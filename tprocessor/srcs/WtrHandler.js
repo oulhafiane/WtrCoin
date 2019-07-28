@@ -29,7 +29,7 @@ class WtrTransactionHandler extends TransactionHandler {
                 return state.enterAuction(payload.bid);
             case 'createOffer':
                 state = new WtrOfferState(context, payload.offer, signer);
-                return state.createOffer(payload.type, payload.startDate, payload.period);
+                return state.createOffer(payload.type, payload.startDate, payload.period, payload.total);
             case 'addParameter':
                 state = new WtrParameterState(context, signer);
                 return state.addParameter(payload.name, payload.value);

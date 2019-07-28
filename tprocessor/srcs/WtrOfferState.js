@@ -27,7 +27,6 @@ class WtrOfferState {
             });
     }
 
-    //remember to check if the bid is higher than the actual
     enterAuction(total) {
         return this.getOffer().then((offer) => {
             if (null === offer)
@@ -37,6 +36,8 @@ class WtrOfferState {
                 throw new InvalidTransaction("This offer is not and auction.");
             if (this.signer === offer[5])
                 throw new InvalidTransaction("You cannot give bid in your auction.");
+            if (total <= offer[6])
+                throw new InvalidTransaction("Your bid is too low.");
             let addressAuction = _makeWtrAddress(this.offer + "-auction");
             return this.context.getState([addressAuction], this.timeout)
                 .then((auctions) => {
@@ -47,9 +48,7 @@ class WtrOfferState {
                     } else {
                         bids = _deserializeBids(auction);
                     }
-                    console.log("bids : " + bids + " => " + JSON.stringify(bids));
                     let bid = bids.get(this.signer);
-                    console.log("bid : " + bid + " => " + JSON.stringify(bid));
                     if (undefined === bid) {
                         let userCoin = new WtrCoin(this.context, this.signer);
                         return userCoin.getBalance().then((coinsBuf) => {
@@ -87,6 +86,8 @@ class WtrOfferState {
                             });
                         });
                     } else {
+                        if (total <= bid.total)
+                            throw new InvalidTransaction("Your bid is too low.");
                         bid = {
                             fees: bid.fees,
                             total: total
@@ -107,7 +108,7 @@ class WtrOfferState {
 
     }
 
-    createOffer(type, startDate, periodParam) {
+    createOffer(type, startDate, periodParam, total) {
         return this.getOffer().then((offer) => {
             if (null !== offer)
                 throw new InvalidTransaction("This offer already exists.");
@@ -139,7 +140,7 @@ class WtrOfferState {
                         startDate = startDate.toString();
                         let endDate = new Date(startDate);
                         endDate.setDate(endDate.getDate() + period);
-                        let data = _serializeOffer(this.offer, type, fees, startDate, endDate.toString(), this.signer);
+                        let data = _serializeOffer(this.offer, type, fees, startDate, endDate.toString(), this.signer, total);
                         let entries = {
                             [this.address]: data
                         }
@@ -208,9 +209,9 @@ const _getFees = (type, parameters, periodParam = null) => {
     return parseInt(fees);
 }
 
-const _serializeOffer = (offer, type, fees, startDate, endDate, owner, confirmed = null) => {
+const _serializeOffer = (offer, type, fees, startDate, endDate, owner, total, confirmed = null) => {
     let data = [];
-    data.push([offer, type, fees, startDate, endDate, owner, confirmed].join(','));
+    data.push([offer, type, fees, startDate, endDate, owner, total, confirmed].join(','));
 
     return Buffer.from(data.join(''));
 }

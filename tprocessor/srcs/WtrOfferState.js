@@ -218,6 +218,10 @@ const _serializeOffer = (offer, type, fees, startDate, endDate, owner, total, co
     return Buffer.from(data.join(''));
 }
 
+const _sortByNumber = (a, b) => {
+    return parseInt(a.split(',')[0]) - parseInt(b.split(','))[0];
+}
+
 const _serializeBids = (bids) => {
     let data = [];
     for (let bid of bids) {
@@ -232,8 +236,7 @@ const _serializeBids = (bids) => {
             throw new InvalidTransaction("Fees of auction cannot contain '|'");
         data.push([total, bidder, fees].join(','));
     }
-    data.sort();
-    data.reverse();
+    data.sort(_sortByNumber);
 
     return Buffer.from(data.join('|'));
 }

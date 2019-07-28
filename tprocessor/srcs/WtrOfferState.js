@@ -76,10 +76,7 @@ class WtrOfferState {
                                         fees: fees,
                                         total: total
                                     };
-                    console.log("signer : " + this.signer);
-                    console.log("bid inside : " + bid + " => " + JSON.stringify(bid));
                                     bids.set(this.signer, bid);
-                    console.log("bids inside : " + bids + " => " + JSON.stringify(bids));
                                     data = _serializeBids(bids);
                                     entries = {
                                         [addressAuction]: data
@@ -222,6 +219,8 @@ const _serializeBids = (bids) => {
     let data = [];
     for (let bid of bids) {
         console.log("bid : " + bid + " => " + JSON.stringify(bid));
+        console.log("bidData : " + bid[1] + " => " + JSON.stringify(bid[1]));
+        console.log("test : " + bid[1].total);
         let bidder = bid[0];
         let fees = bid[1].fees;
         let total = bid[1].total;

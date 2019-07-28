@@ -41,12 +41,12 @@ class WtrOfferState {
             return this.context.getState([addressAuction], this.timeout)
                 .then((auctions) => {
                     let auction = auctions[addressAuction];
-                    console.log("auction : " + auction + " => " + JSON.stringify(auction));
+                    let bids;
                     if (!auction.toString()) {
-                        auction = new Map([]);
+                        bids = new Map([]);
+                    } else {
+                        bids = _deserializeBids(auction);
                     }
-                    console.log("auction2 : " + auction + " => " + JSON.stringify(auction));
-                    let bids = _deserializeBids(auction);
                     console.log("bids : " + bids + " => " + JSON.stringify(bids));
                     let bid = bids.get(this.signer);
                     console.log("bid : " + bid + " => " + JSON.stringify(bid));
@@ -76,6 +76,7 @@ class WtrOfferState {
                                         fees: fees,
                                         total: total
                                     };
+                    console.log("signer : " + this.signer);
                     console.log("bid inside : " + bid + " => " + JSON.stringify(bid));
                                     bids.set(this.signer, bid);
                     console.log("bids inside : " + bids + " => " + JSON.stringify(bids));

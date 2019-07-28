@@ -55,7 +55,7 @@ class WtrOfferState {
                                 let fees = _deserializeParameters(parametersBuf).get('feesBid');
                                 if (isNaN(fees))
                                     throw new InvalidTransaction("Cannot get the right parameters.");
-                                if (parseInt(coins[0]) < fees)
+                                if (isNaN(coins[0]) || parseInt(coins[0]) < fees)
                                     throw new InvalidTransaction("You don't have enough coins.");
                                 coins[0] = parseInt(coins[0]) - fees;
                                 coins[1] = parseInt(coins[1]) + fees;
@@ -65,12 +65,32 @@ class WtrOfferState {
                                 }
 
                                 return this.context.setState(entries, this.timeout).then(() => {
-                                    
+                                    bid = {
+                                        fees: fees,
+                                        total: total
+                                    };
+                                    bids.set(this.signer, bid);
+                                    data = _serializeBids(bids);
+                                    entries = {
+                                        [addressAuction]: data
+                                    };
+
+                                    return this.context.setState(entries, this.timeout);
                                 });
                             });
                         });
                     } else {
+                        bid = {
+                            fees: fees,
+                            total: total
+                        };
+                        bids.set(this.signer, bid);
+                        data = _serializeBids(bids);
+                        entries = {
+                            [addressAuction]: data
+                        };
 
+                        return this.context.setState(entries, this.timeout);
                     }
                 });
         });

@@ -214,6 +214,7 @@ const _serializeOffer = (offer, type, fees, startDate, endDate, owner, confirmed
 const _serializeBids = (bids) => {
     let data = [];
     for (let bid of bids) {
+        console.log("bid + " + bid + " => " + JSON.stringify(bid));
         let bidder = bid[0];
         let fees = bid[1].fees;
         let total = bid[1].total;

@@ -219,9 +219,7 @@ const _serializeOffer = (offer, type, fees, startDate, endDate, owner, total, co
 }
 
 const _sortByNumber = (a, b) => {
-    console.log("a : " + a + " => " + JSON.stringify(a));
-    console.log(a.split(',')[0]);
-    return parseInt(a.split(',')[0]) - parseInt(b.split(','))[0];
+    return parseInt(a.split(',')[0]) - parseInt(b.split(',')[0]);
 }
 
 const _serializeBids = (bids) => {

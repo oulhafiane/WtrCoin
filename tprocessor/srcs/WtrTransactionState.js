@@ -57,6 +57,7 @@ class WtrTransactionState {
 
 
             return buyerCoin.getBalance().then ((coins) => {
+                coins = parseInt(coins.toString());
                 if (coins < parseInt(total))
                     throw new InvalidTransaction("You don't have enough coins.");
                 let newCoins = coins - total;

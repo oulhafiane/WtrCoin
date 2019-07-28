@@ -87,8 +87,8 @@ class WtrOfferState {
                         });
                     } else {
                         console.log ("total : " + total);
-                        console.log( "bid total : "+ bids.values().next());
-                        if (total <= parseInt(bids.values().next()))
+                        console.log( "bid total : "+ bids.values().next().total);
+                        if (total <= parseInt(bids.values().next().total))
                             throw new InvalidTransaction("Your bid is too low.");
                         bid = {
                             fees: bid.fees,

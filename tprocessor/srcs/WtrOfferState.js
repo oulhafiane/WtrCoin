@@ -218,17 +218,14 @@ const _serializeOffer = (offer, type, fees, startDate, endDate, owner, confirmed
 const _serializeBids = (bids) => {
     let data = [];
     for (let bid of bids) {
-        console.log("bid : " + bid + " => " + JSON.stringify(bid));
-        console.log("bidData : " + bid[1] + " => " + JSON.stringify(bid[1]));
-        console.log("test : " + bid[1].total);
         let bidder = bid[0];
         let fees = bid[1].fees;
         let total = bid[1].total;
         if (bidder.indexOf('|') !== -1)
             throw new InvalidTransaction("Bidder address cannot contain '|'");
-        if (fees.value.indexOf('|') !== -1)
+        if (fees.indexOf('|') !== -1)
             throw new InvalidTransaction("Fees of auction cannot contain '|'");
-        if (total.value.indexOf('|') !== -1)
+        if (total.indexOf('|') !== -1)
             throw new InvalidTransaction("Fees of auction cannot contain '|'");
         data.push([total, bidder, fees].join(','));
     }

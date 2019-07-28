@@ -92,8 +92,8 @@ class WtrOfferState {
                             total: total
                         };
                         bids.set(this.signer, bid);
-                        data = _serializeBids(bids);
-                        entries = {
+                        let data = _serializeBids(bids);
+                        let entries = {
                             [addressAuction]: data
                         };
 

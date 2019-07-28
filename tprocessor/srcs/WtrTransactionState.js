@@ -60,6 +60,10 @@ class WtrTransactionState {
                 coinsBuf = coinsBuf.toString().split(',');
                 let coins = parseInt(coinsBuf[0]);
                 let onhold = parseInt(coinsBuf[1]);
+                if (isNaN(coins))
+                    coins = 0;
+                if (isNaN(onhold))
+                    onhold = 0;
                 if (coins < parseInt(total))
                     throw new InvalidTransaction("You don't have enough coins.");
                 let newCoins = coins - total;
@@ -98,11 +102,16 @@ class WtrTransactionState {
                 throw new InvalidTransaction("This transaction not paid yet or canceled.");
             let sellerCoin = new WtrCoin(this.context, seller);
             
-            return sellerCoin.getBalance().then ((coins) => {
+            return sellerCoin.getBalance().then ((coinsBuf) => {
+                coinsBuf = coinsBuf.toString().split(',');
+                let coins = parseInt(coinsBuf[0]);
+                let onhold = parseInt(coinsBuf[1]);
                 if (isNaN(coins))
                     coins = 0;
+                if (isNaN(onhold))
+                    onhold = 0;
                 let newCoins = coins + total;
-                let data = _serializeCoins(newCoins.toString());
+                let data = _serializeCoins(newCoins.toString(), onhold.toString());
                 let entries = {
                     [sellerCoin.address]: data
                 } 

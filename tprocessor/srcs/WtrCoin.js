@@ -37,11 +37,13 @@ class WtrCoin {
             } else {
                 coins = coinsBuf.toString().split(',');
             }
+            coins[0] = parseInt(coins[0]);
+            coins[1] = parseInt(coins[1]);
             if (isNaN(coins[0]))
                 coins[0] = 0;
             if (isNaN(coins[1]))
                 coins[1] = 0;
-            let newCoins = parseInt(coinsToDeposit) + parseInt(coins[0]);
+            let newCoins = parseInt(coinsToDeposit) + coins[0];
             let data = _serializeCoins(newCoins.toString(), coins[1].toString());
             let entries = {
                 [this.address]: data

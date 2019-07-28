@@ -41,11 +41,15 @@ class WtrOfferState {
             return this.context.getState([addressAuction], this.timeout)
                 .then((auctions) => {
                     let auction = auctions[addressAuction];
+                    console.log("auction : " + auction + " => " + JSON.stringify(auction));
                     if (!auction.toString()) {
                         auction = new Map([]);
                     }
+                    console.log("auction2 : " + auction + " => " + JSON.stringify(auction));
                     let bids = _deserializeBids(auction);
+                    console.log("bids : " + bids + " => " + JSON.stringify(bids));
                     let bid = bids.get(this.signer);
+                    console.log("bid : " + bid + " => " + JSON.stringify(bid));
                     if (undefined === bid) {
                         let userCoin = new WtrCoin(this.context, this.signer);
                         return userCoin.getBalance().then((coinsBuf) => {
@@ -72,7 +76,9 @@ class WtrOfferState {
                                         fees: fees,
                                         total: total
                                     };
+                    console.log("bid inside : " + bid + " => " + JSON.stringify(bid));
                                     bids.set(this.signer, bid);
+                    console.log("bids inside : " + bids + " => " + JSON.stringify(bids));
                                     data = _serializeBids(bids);
                                     entries = {
                                         [addressAuction]: data
@@ -214,7 +220,7 @@ const _serializeOffer = (offer, type, fees, startDate, endDate, owner, confirmed
 const _serializeBids = (bids) => {
     let data = [];
     for (let bid of bids) {
-        console.log("bid + " + bid + " => " + JSON.stringify(bid));
+        console.log("bid : " + bid + " => " + JSON.stringify(bid));
         let bidder = bid[0];
         let fees = bid[1].fees;
         let total = bid[1].total;

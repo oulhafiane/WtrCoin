@@ -86,8 +86,6 @@ class WtrOfferState {
                             });
                         });
                     } else {
-                        console.log ("total : " + total);
-                        console.log( "bid total : "+ bids.values().next().total);
                         if (total <= parseInt(bids.values().next().total))
                             throw new InvalidTransaction("Your bid is too low.");
                         bid = {
@@ -219,7 +217,7 @@ const _serializeOffer = (offer, type, fees, startDate, endDate, owner, total, co
 }
 
 const _sortByNumber = (a, b) => {
-    return parseInt(a.split(',')[0]) - parseInt(b.split(',')[0]);
+    return parseInt(b.split(',')[0]) - parseInt(a.split(',')[0]);
 }
 
 const _serializeBids = (bids) => {

@@ -30,7 +30,7 @@ class WtrOfferState {
     //remember to check if the bid is higher than the actual
     enterAuction(total) {
         return this.getOffer().then((offer) => {
-            if (null !== offer)
+            if (null === offer)
                 throw new InvalidTransaction("Offer not found");
             offer = offer.toString().split(',');
             if ("auction" !== offer[1])

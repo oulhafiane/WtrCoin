@@ -21,6 +21,12 @@ class WtrTransactionHandler extends TransactionHandler {
         payload = WtrPayload.fromBytes(transactionRequest.payload);
 
         switch (payload.action) {
+            case 'leaveAuction':
+                state = new WtrOfferState(context, payload.offer, signer);
+                return state.leaveAuction();
+            case 'enterAuction':
+                state = new WtrOfferState(context, payload.offer, signer);
+                return state.enterAuction(payload.bid);
             case 'createOffer':
                 state = new WtrOfferState(context, payload.offer, signer);
                 return state.createOffer(payload.type, payload.startDate, payload.period);

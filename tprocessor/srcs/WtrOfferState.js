@@ -27,6 +27,7 @@ class WtrOfferState {
             });
     }
 
+    //remember to check if the bid is higher than the actual
     enterAuction(total) {
         return this.getOffer().then((offer) => {
             if (null !== offer)
@@ -34,6 +35,8 @@ class WtrOfferState {
             offer = offer.toString().split(',');
             if ("auction" !== offer[1])
                 throw new InvalidTransaction("This offer is not and auction.");
+            if (this.signer === offer[5])
+                throw new InvalidTransaction("You cannot give bid in your auction.");
             let addressAuction = _makeWtrAddress(this.offer + "-auction");
             return this.context.getState([addressAuction], this.timeout)
                 .then((auctions) => {

@@ -19,6 +19,8 @@ class WtrPayload {
     static fromBytes (payloadBuf) {
         let payload = cbor.decodeFirstSync(payloadBuf);
         switch (payload.action) {
+            case 'leaveAuction':
+            case 'enterAuction':
             case 'createOffer':
                 return WtrOfferPayload.fromBytes(payloadBuf);
             case 'addParameter':
